@@ -1,6 +1,6 @@
 {
   "name": "@andreasnicolaou/emoji-x-converter",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A TypeScript library to convert between emojis and their textual descriptions across different languages using customizable mappings.",
   "main": "dist/index.js",
   "private": false,
