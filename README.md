@@ -16,19 +16,19 @@ npm install @andreasnicolaou/emoji-x-converter
 ## Usage
 
 ### Importing the Library
-```bash
+```typescript
 import { EmojiXConverter } from '@andreasnicolaou/emoji-x-converter';
 ```
 
 ### Converting Emoji to Description
-```bash
+```typescript
 const xConverter = EmojiXConverter.getInstance('en');
 const result = xConverter.convertText('I love 🍣 and 🍕');
 console.log(result); // "I love sushi and pizza"
 ```
 
 ### Converting Description to Emoji
-```bash
+```typescript
 const xConverter = EmojiXConverter.getInstance('en', 'CONVERT_DESCRIPTION');
 const result = xConverter.convertText('I love :sushi: and :pizza:');
 console.log(result); // "I love 🍣 and 🍕"
