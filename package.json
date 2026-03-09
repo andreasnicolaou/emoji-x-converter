@@ -1,6 +1,6 @@
 {
   "name": "@andreasnicolaou/emoji-x-converter",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "A TypeScript library to convert between emojis and their textual descriptions across different languages using customizable mappings.",
   "main": "dist/index.js",
   "private": false,
@@ -39,10 +39,12 @@
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
-    "@types/node": "^25.3.5",
-    "@typescript-eslint/eslint-plugin": "^8.56.1",
+    "@types/node": "^25.4.0",
+    "@typescript-eslint/eslint-plugin": "^8.57.0",
     "@typescript-eslint/parser": "^8.57.0",
-    "eslint": "^9.39.4",
+    "@eslint/js": "^10.0.1",
+    "@eslint/eslintrc": "^3.3.5",
+    "eslint": "^10.0.3",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
     "jest": "^30.2.0",
