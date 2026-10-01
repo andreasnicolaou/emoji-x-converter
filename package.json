@@ -52,7 +52,7 @@
     "terser": "^5.51.2",
     "ts-jest": "^29.4.12",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
+    "typescript": "^7.0.2"
   },
   "keywords": [
     "emoji",
