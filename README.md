@@ -5,7 +5,8 @@ EmojiX Converter enables conversion between emojis and their textual description
 ## Features
 
 - Convert emojis to text descriptions and vice versa
-- Support for multiple languages through customizable mappings
+- All emojis up to Emoji 18.0, including skin tones and ZWJ sequences, with names from Unicode CLDR
+- 20 languages: `ar`, `de`, `el`, `en`, `es`, `fr`, `hi`, `id`, `it`, `ja`, `ko`, `nl`, `pl`, `pt`, `ru`, `sv`, `th`, `tr`, `vi`, `zh`
 - Singleton pattern to optimize memory usage
 - Easy integration for developers
 
@@ -21,6 +22,21 @@ npm install @andreasnicolaou/emoji-x-converter
 
 ```typescript
 import { EmojiXConverter } from '@andreasnicolaou/emoji-x-converter';
+```
+
+CommonJS is supported too:
+
+```javascript
+const { EmojiXConverter } = require('@andreasnicolaou/emoji-x-converter');
+```
+
+In the browser, load the UMD build from a CDN and use the `emojiXConverter` global:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@andreasnicolaou/emoji-x-converter"></script>
+<script>
+  const xConverter = emojiXConverter.EmojiXConverter.getInstance('en');
+</script>
 ```
 
 ### Converting Emoji to Description
@@ -42,3 +58,13 @@ console.log(result); // "I love 🍣 and 🍕"
 ## Contributing
 
 Contributions are welcome! If you encounter issues or have ideas to enhance the library, feel free to submit an issue or pull request.
+
+### Updating the emoji data
+
+The files in `src/data` are generated from Unicode's `emoji-test.txt` and CLDR's emoji names. To move to a newer release, bump `EMOJI_VERSION` and `CLDR_VERSION` in `generate-emoji-data.mjs` and run:
+
+```bash
+npm run generate:emoji
+```
+
+To add a language, create an empty `src/data/<code>.ts`, register it in `src/data/loader.ts`, and run the generator.

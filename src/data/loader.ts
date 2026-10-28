@@ -1,47 +1,25 @@
-import ar from './ar';
-import de from './de';
-import el from './el';
-import en from './en';
-import es from './es';
-import fr from './fr';
-import hi from './hi';
-import id from './id';
-import it from './it';
-import ja from './ja';
-import ko from './ko';
+import ar from './ar.js';
+import de from './de.js';
+import el from './el.js';
+import en from './en.js';
+import es from './es.js';
+import fr from './fr.js';
+import hi from './hi.js';
+import id from './id.js';
+import it from './it.js';
+import ja from './ja.js';
+import ko from './ko.js';
+import nl from './nl.js';
+import pl from './pl.js';
+import pt from './pt.js';
+import ru from './ru.js';
+import sv from './sv.js';
+import th from './th.js';
+import tr from './tr.js';
+import vi from './vi.js';
+import zh from './zh.js';
 
-import nl from './nl';
-import pl from './pl';
-import pt from './pt';
-import ru from './ru';
-import sv from './sv';
-import th from './th';
-import tr from './tr';
-import vi from './vi';
-import zh from './zh';
-type LanguageType =
-  | 'en'
-  | 'el'
-  | 'ko'
-  | 'hi'
-  | 'id'
-  | 'es'
-  | 'zh'
-  | 'th'
-  | 'tr'
-  | 'vi'
-  | 'sv'
-  | 'nl'
-  | 'pl'
-  | 'fr'
-  | 'de'
-  | 'ar'
-  | 'pt'
-  | 'ru'
-  | 'ja'
-  | 'it';
-
-export const emojiXLoader: Record<LanguageType, Record<string, string>> = {
+const languages = {
   en,
   el,
   ko,
@@ -64,4 +42,6 @@ export const emojiXLoader: Record<LanguageType, Record<string, string>> = {
   it,
 };
 
-export type LanguageXCode = keyof typeof emojiXLoader;
+export type LanguageXCode = keyof typeof languages;
+
+export const emojiXLoader: Record<LanguageXCode, Record<string, string>> = languages;
