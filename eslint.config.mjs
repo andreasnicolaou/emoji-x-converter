@@ -15,6 +15,7 @@ const compat = new FlatCompat({
 });
 
 export default [
+  { ignores: ['dist/'] },
   ...compat.extends('eslint:recommended', 'plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended'),
   {
     plugins: {
@@ -56,6 +57,13 @@ export default [
           },
         },
       ],
+    },
+  },
+  {
+    // Plain JavaScript scripts cannot declare return types
+    files: ['**/*.mjs'],
+    rules: {
+      '@typescript-eslint/explicit-function-return-type': 'off',
     },
   },
 ];

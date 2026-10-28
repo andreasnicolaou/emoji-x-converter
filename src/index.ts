@@ -1,47 +1,57 @@
-import { emojiXLoader, LanguageXCode } from './data/loader';
+import { emojiXLoader, LanguageXCode } from './data/loader.js';
+export type { LanguageXCode };
 export type ConversionMode = 'CONVERT_EMOJI' | 'CONVERT_DESCRIPTION';
 
-export class EmojiXConverter {
-  private static readonly EMOJI_PREFIX = '\xA9\xAE\xE2\xE3\xF0';
-  private static instances: Record<string, EmojiXConverter> = Object.create(EmojiXConverter.prototype);
-  public id!: LanguageXCode;
-  private map!: Record<string, string>;
+// Map keys and matches are compared without U+FE0F and with no-break spaces as regular spaces
+const normalize = (text: string): string => text.replace(/\uFE0F/g, '').replace(/[\u00A0\u202F]/g, ' ');
 
-  public static getInstance(id: LanguageXCode, direction: ConversionMode = 'CONVERT_EMOJI'): EmojiXConverter {
-    const key = `${id}-${direction.toLowerCase()}`;
-    if (!this.instances[key]) {
-      this.instances[key] = this.createInstance(id, direction);
-    }
-    return this.instances[key];
+// Unicode still treats an emoji as qualified when U+FE0F is dropped anywhere but right after its first code point
+const toPattern = (key: string): string =>
+  [...key]
+    .map((char, index) => {
+      if (char === '\uFE0F' && index > 1) {
+        return '\uFE0F?';
+      }
+      if (char === ' ') {
+        return '[ \u00A0\u202F]';
+      }
+      return char.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    })
+    .join('');
+
+export class EmojiXConverter {
+  private static readonly instances = new Map<string, EmojiXConverter>();
+  public id: LanguageXCode;
+  private readonly map: Record<string, string>;
+  private readonly regex: RegExp;
+
+  private constructor(id: LanguageXCode, direction: ConversionMode) {
+    this.id = id;
+    const entries = Object.entries(emojiXLoader[id]).map(([emoji, description]) =>
+      direction === 'CONVERT_DESCRIPTION' ? [`:${description}:`, emoji] : [emoji, description]
+    );
+    this.map = Object.fromEntries(entries.map(([key, value]) => [normalize(key), value]));
+
+    // Longest keys first so multi-codepoint emojis/descriptions win over their prefixes
+    const keys = entries.map(([key]) => key).sort((a, b) => b.length - a.length);
+    this.regex = new RegExp(keys.map(toPattern).join('|'), 'g');
   }
 
-  private static createInstance(id: LanguageXCode, direction: ConversionMode): EmojiXConverter {
-    if (!Object.keys(emojiXLoader).includes(id)) {
+  public static getInstance(id: LanguageXCode, direction: ConversionMode = 'CONVERT_EMOJI'): EmojiXConverter {
+    if (!Object.hasOwn(emojiXLoader, id)) {
       throw new Error(`Language map for "${id}" not found. Available IDs: ${Object.keys(emojiXLoader).join(', ')}`);
     }
 
-    const instance = Object.create(EmojiXConverter.prototype) as EmojiXConverter;
-    instance.id = id;
-    instance.map = emojiXLoader[id];
-
-    if (direction === 'CONVERT_DESCRIPTION') {
-      instance.map = Object.fromEntries(
-        Object.entries(instance.map).map(([emoji, description]) => [`:${description}:`, emoji])
-      );
+    const key = `${id}-${direction.toLowerCase()}`;
+    let instance = this.instances.get(key);
+    if (!instance) {
+      instance = new EmojiXConverter(id, direction);
+      this.instances.set(key, instance);
     }
-
     return instance;
   }
 
-  public convertText(input: string): string | false {
-    const emojiKeys = Object.keys(this.map).sort((a, b) => b.length - a.length);
-    const regex = new RegExp(emojiKeys.join('|'), 'g');
-    const emojiPrefix = input.startsWith(Object.keys(this.map)[0]) ? ':' : EmojiXConverter.EMOJI_PREFIX;
-    if (/^[\s\S]*$/u.test(input)) {
-      return input.length === input.split('').findIndex((char) => emojiPrefix.includes(char))
-        ? input
-        : input.replace(regex, (match: string): string => this.map[match] || match);
-    }
-    return input;
+  public convertText(input: string): string {
+    return input.replace(this.regex, (match: string): string => this.map[normalize(match)] ?? match);
   }
 }
